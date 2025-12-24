@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LoveMeter – Real Love Analysis</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --pink:#ff4d6d;
+  --dark:#0f0f14;
+  --glass:rgba(255,255,255,0.12);
+}
+
+*{box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:radial-gradient(circle at top,#ff4d6d,#6a0572,#0f0f14);
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.container{
+  width:100%;
+  max-width:480px;
+  background:var(--glass);
+  backdrop-filter:blur(20px);
+  border-radius:22px;
+  padding:28px;
+  box-shadow:0 30px 80px rgba(0,0,0,0.6);
+  animation:fadeIn 1s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+h1{
+  text-align:center;
+  margin-bottom:6px;
+}
+
+.subtitle{
+  text-align:center;
+  opacity:.8;
+  margin-bottom:20px;
+}
+
+label{
+  font-size:14px;
+  opacity:.9;
+}
+
+input,select{
+  width:100%;
+  padding:12px;
+  margin:6px 0 16px;
+  border:none;
+  border-radius:12px;
+  background:rgba(255,255,255,.15);
+  color:white;
+  outline:none;
+}
+
+select option{color:black}
+
+.question{
+  margin-bottom:18px;
+}
+
+.options button{
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  background:rgba(255,255,255,.15);
+  border:none;
+  border-radius:14px;
+  color:white;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.options button:hover{
+  background:var(--pink);
+}
+
+.options button.active{
+  background:var(--pink);
+}
+
+button.main{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  background:linear-gradient(45deg,#ff4d6d,#ff758f);
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+.result{
+  display:none;
+  text-align:center;
+}
+
+.heart{
+  font-size:64px;
+  animation:pulse 1.2s infinite;
+}
+
+@keyframes pulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.15)}
+  100%{transform:scale(1)}
+}
+
+.score{
+  font-size:42px;
+  font-weight:bold;
+}
+
+.report{
+  background:rgba(255,255,255,.12);
+  padding:16px;
+  border-radius:14px;
+  margin-top:16px;
+  text-align:left;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="app">
+
+<div id="form">
+
+<h1>💖 LoveMeter</h1>
+<p class="subtitle">Real psychological love analysis</p>
+
+<label>Your Name</label>
+<input id="you">
+
+<label>Partner Name</label>
+<input id="partner">
+
+<div class="question">
+<label>When your partner is upset, you usually:</label>
+<div class="options" data-score="emotional">
+<button data-value="10">Listen and understand</button>
+<button data-value="7">Try to fix things</button>
+<button data-value="5">Give space</button>
+<button data-value="2">Avoid it</button>
+</div>
+</div>
+
+<div class="question">
+<label>If they don’t reply for hours, you feel:</label>
+<div class="options" data-score="attachment">
+<button data-value="10">Calm</button>
+<button data-value="7">Slightly anxious</button>
+<button data-value="4">Overthinking</button>
+<button data-value="2">Ignored or angry</button>
+</div>
+</div>
+
+<div class="question">
+<label>During arguments, you usually:</label>
+<div class="options" data-score="communication">
+<button data-value="10">Talk it out</button>
+<button data-value="7">Take time then talk</button>
+<button data-value="4">Shut down</button>
+<button data-value="2">Get defensive</button>
+</div>
+</div>
+
+<div class="question">
+<label>Do you feel emotionally safe with them?</label>
+<div class="options" data-score="trust">
+<button data-value="10">Very safe</button>
+<button data-value="7">Mostly safe</button>
+<button data-value="4">Sometimes</button>
+<button data-value="2">Rarely</button>
+</div>
+</div>
+
+<button class="main" onclick="calculate()">Measure Love</button>
+
+</div>
+
+<div class="result" id="result">
+<div class="heart">❤️</div>
+<div class="score" id="score"></div>
+<p id="message"></p>
+
+<div class="report" id="report"></div>
+
+<button class="main" onclick="location.reload()">Recalculate</button>
+</div>
+
+</div>
+
+<script>
+let total = {emotional:0,attachment:0,communication:0,trust:0};
+
+document.querySelectorAll(".options button").forEach(btn=>{
+  btn.onclick=()=>{
+    let parent=btn.parentElement;
+    parent.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    total[parent.dataset.score]=Number(btn.dataset.value);
+  }
+});
+
+function calculate(){
+  let sum = total.emotional + total.attachment + total.communication + total.trust;
+  if(sum===0){alert("Please answer all questions");return}
+
+  let percent = Math.round((sum/40)*100);
+  document.getElementById("form").style.display="none";
+  document.getElementById("result").style.display="block";
+  document.getElementById("score").innerText = percent+"%";
+
+  let msg="", insight="";
+
+  if(percent>=80){
+    msg="This is a rare emotional connection.";
+    insight="Strong trust, healthy communication, and emotional safety are present. This bond has long-term potential.";
+  }else if(percent>=60){
+    msg="A real connection with growth areas.";
+    insight="There is care and attachment, but emotional understanding and communication need attention.";
+  }else if(percent>=40){
+    msg="Emotions exist, stability is uncertain.";
+    insight="Inconsistency, insecurity, or emotional distance may affect this relationship.";
+  }else{
+    msg="This connection needs deep reflection.";
+    insight="Emotional safety and trust are low. Honest communication is required.";
+  }
+
+  document.getElementById("message").innerText=msg;
+  document.getElementById("report").innerHTML=
+    "<b>Psychological Insight:</b><br>"+insight+
+    "<br><br><b>Strength:</b> "+(total.emotional>=7?"Emotional awareness":"Needs empathy")+
+    "<br><b>Risk:</b> "+(total.trust<=4?"Low emotional security":"Manage expectations");
+}
+</script>
+
+</body>
+</html>
