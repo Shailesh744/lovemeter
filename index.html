@@ -2,116 +2,61 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>LoveMeter – Real Love Analysis</title>
+<title>LoveMeter – Psychological Love Analysis</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 :root{
   --pink:#ff4d6d;
+  --purple:#6a0572;
   --dark:#0f0f14;
-  --glass:rgba(255,255,255,0.12);
+  --glass:rgba(255,255,255,.12);
 }
 
-*{box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+*{box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif}
 
 body{
   margin:0;
-  min-height:100vh;
-  background:radial-gradient(circle at top,#ff4d6d,#6a0572,#0f0f14);
-  color:#fff;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  height:100vh;
+  background:radial-gradient(circle at top,var(--pink),var(--purple),var(--dark));
+  color:white;
+  overflow:hidden;
 }
 
-.container{
-  width:100%;
-  max-width:480px;
-  background:var(--glass);
-  backdrop-filter:blur(20px);
-  border-radius:22px;
-  padding:28px;
-  box-shadow:0 30px 80px rgba(0,0,0,0.6);
-  animation:fadeIn 1s ease;
+#app{height:100vh;position:relative}
+
+.page{
+  position:absolute;
+  inset:0;
+  padding:30px 18px;
+  display:none;
+  overflow-y:auto;
+  animation:fade .5s ease;
 }
 
-@keyframes fadeIn{
+.page.active{display:block}
+
+@keyframes fade{
   from{opacity:0;transform:translateY(20px)}
   to{opacity:1;transform:translateY(0)}
 }
 
-h1{
-  text-align:center;
-  margin-bottom:6px;
+.container{
+  max-width:520px;
+  margin:auto;
+  background:var(--glass);
+  backdrop-filter:blur(22px);
+  border-radius:24px;
+  padding:26px;
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
 }
 
-.subtitle{
-  text-align:center;
-  opacity:.8;
-  margin-bottom:20px;
-}
+h1,h2{text-align:center}
+p{text-align:center;opacity:.85}
 
-label{
-  font-size:14px;
-  opacity:.9;
-}
-
-input,select{
-  width:100%;
-  padding:12px;
-  margin:6px 0 16px;
-  border:none;
-  border-radius:12px;
-  background:rgba(255,255,255,.15);
-  color:white;
-  outline:none;
-}
-
-select option{color:black}
-
-.question{
-  margin-bottom:18px;
-}
-
-.options button{
-  width:100%;
-  padding:12px;
-  margin-top:8px;
-  background:rgba(255,255,255,.15);
-  border:none;
-  border-radius:14px;
-  color:white;
-  cursor:pointer;
-  transition:.3s;
-}
-
-.options button:hover{
-  background:var(--pink);
-}
-
-.options button.active{
-  background:var(--pink);
-}
-
-button.main{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:18px;
-  background:linear-gradient(45deg,#ff4d6d,#ff758f);
-  color:white;
-  font-size:16px;
-  cursor:pointer;
-  margin-top:10px;
-}
-
-.result{
-  display:none;
-  text-align:center;
-}
-
-.heart{
+.hero-heart{
   font-size:64px;
+  text-align:center;
   animation:pulse 1.2s infinite;
 }
 
@@ -121,135 +66,309 @@ button.main{
   100%{transform:scale(1)}
 }
 
-.score{
-  font-size:42px;
-  font-weight:bold;
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  background:linear-gradient(45deg,var(--pink),#ff758f);
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  margin-top:14px;
+}
+
+button.secondary{background:rgba(255,255,255,.15)}
+
+input,select{
+  width:100%;
+  padding:12px;
+  margin:8px 0 16px;
+  border-radius:14px;
+  border:none;
+  background:rgba(255,255,255,.15);
+  color:white;
+  outline:none;
+}
+
+.question{margin:20px 0}
+
+.options button{
+  background:rgba(255,255,255,.15);
+  margin-top:10px;
+}
+
+.options button.active{background:var(--pink)}
+
+.progress{text-align:center;font-size:13px;opacity:.8}
+
+.bar{
+  background:rgba(255,255,255,.2);
+  border-radius:12px;
+  overflow:hidden;
+  margin:8px 0;
+}
+
+.bar span{
+  display:block;
+  height:12px;
+  background:linear-gradient(90deg,var(--pink),#ff9aa2);
 }
 
 .report{
-  background:rgba(255,255,255,.12);
-  padding:16px;
-  border-radius:14px;
-  margin-top:16px;
   text-align:left;
   font-size:14px;
+  background:rgba(255,255,255,.12);
+  padding:16px;
+  border-radius:16px;
+  margin-top:16px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container" id="app">
+<div id="app">
 
-<div id="form">
+<!-- LANDING -->
+<section class="page active" id="landing">
+  <div class="container">
+    <div class="hero-heart">❤️</div>
+    <h1>LoveMeter</h1>
+    <p><b>Not a love calculator.</b><br>A psychological mirror.</p>
+    <button onclick="go('basic')">Start Love Analysis</button>
+    <button class="secondary" onclick="go('about')">How It Works</button>
+  </div>
+</section>
 
-<h1>💖 LoveMeter</h1>
-<p class="subtitle">Real psychological love analysis</p>
+<!-- ABOUT -->
+<section class="page" id="about">
+  <div class="container">
+    <h2>How It Works</h2>
+    <p>
+      LoveMeter analyzes emotional safety, attachment,
+      trust, communication, and future clarity.
+    </p>
+    <p>
+      This is <b>honest, reflective, and human</b>.
+    </p>
+    <button onclick="go('basic')">Begin</button>
+    <button class="secondary" onclick="go('landing')">Back</button>
+  </div>
+</section>
 
-<label>Your Name</label>
-<input id="you">
+<!-- BASIC -->
+<section class="page" id="basic">
+  <div class="container">
+    <div class="progress">Step 1 of 5</div>
+    <h2>Basic Bond</h2>
+    <input id="you" placeholder="Your name">
+    <input id="partner" placeholder="Partner name">
+    <select id="type">
+      <option>Crush</option>
+      <option>Dating</option>
+      <option>Serious</option>
+      <option>Long Distance</option>
+      <option>Married</option>
+    </select>
+    <button onclick="go('emotional')">Next</button>
+  </div>
+</section>
 
-<label>Partner Name</label>
-<input id="partner">
+<!-- EMOTIONAL -->
+<section class="page" id="emotional">
+  <div class="container">
+    <div class="progress">Step 2 of 5</div>
+    <h2>Emotional & Attachment</h2>
 
-<div class="question">
-<label>When your partner is upset, you usually:</label>
-<div class="options" data-score="emotional">
-<button data-value="10">Listen and understand</button>
-<button data-value="7">Try to fix things</button>
-<button data-value="5">Give space</button>
-<button data-value="2">Avoid it</button>
-</div>
-</div>
+    <div class="question">
+      <p>When your partner is upset:</p>
+      <div class="options">
+        <button onclick="choose(this,10,'emotional')">Listen deeply</button>
+        <button onclick="choose(this,7,'emotional')">Try to fix</button>
+        <button onclick="choose(this,4,'emotional')">Give space</button>
+        <button onclick="choose(this,2,'emotional')">Avoid emotions</button>
+      </div>
+    </div>
 
-<div class="question">
-<label>If they don’t reply for hours, you feel:</label>
-<div class="options" data-score="attachment">
-<button data-value="10">Calm</button>
-<button data-value="7">Slightly anxious</button>
-<button data-value="4">Overthinking</button>
-<button data-value="2">Ignored or angry</button>
-</div>
-</div>
+    <div class="question">
+      <p>If they reply late:</p>
+      <div class="options">
+        <button onclick="choose(this,10,'attachment')">Feel secure</button>
+        <button onclick="choose(this,7,'attachment')">Slight anxiety</button>
+        <button onclick="choose(this,4,'attachment')">Overthink</button>
+        <button onclick="choose(this,2,'attachment')">Feel ignored</button>
+      </div>
+    </div>
 
-<div class="question">
-<label>During arguments, you usually:</label>
-<div class="options" data-score="communication">
-<button data-value="10">Talk it out</button>
-<button data-value="7">Take time then talk</button>
-<button data-value="4">Shut down</button>
-<button data-value="2">Get defensive</button>
-</div>
-</div>
+    <button onclick="go('trust')">Next</button>
+    <button class="secondary" onclick="go('basic')">Back</button>
+  </div>
+</section>
 
-<div class="question">
-<label>Do you feel emotionally safe with them?</label>
-<div class="options" data-score="trust">
-<button data-value="10">Very safe</button>
-<button data-value="7">Mostly safe</button>
-<button data-value="4">Sometimes</button>
-<button data-value="2">Rarely</button>
-</div>
-</div>
+<!-- TRUST -->
+<section class="page" id="trust">
+  <div class="container">
+    <div class="progress">Step 3 of 5</div>
+    <h2>Trust & Communication</h2>
 
-<button class="main" onclick="calculate()">Measure Love</button>
+    <div class="question">
+      <p>Emotional safety:</p>
+      <div class="options">
+        <button onclick="choose(this,10,'trust')">Very safe</button>
+        <button onclick="choose(this,7,'trust')">Mostly safe</button>
+        <button onclick="choose(this,4,'trust')">Sometimes</button>
+        <button onclick="choose(this,2,'trust')">Rarely</button>
+      </div>
+    </div>
 
-</div>
+    <div class="question">
+      <p>During conflicts:</p>
+      <div class="options">
+        <button onclick="choose(this,10,'communication')">Talk openly</button>
+        <button onclick="choose(this,7,'communication')">Need time</button>
+        <button onclick="choose(this,4,'communication')">Shut down</button>
+        <button onclick="choose(this,2,'communication')">Get defensive</button>
+      </div>
+    </div>
 
-<div class="result" id="result">
-<div class="heart">❤️</div>
-<div class="score" id="score"></div>
-<p id="message"></p>
+    <button onclick="go('future')">Next</button>
+    <button class="secondary" onclick="go('emotional')">Back</button>
+  </div>
+</section>
 
-<div class="report" id="report"></div>
+<!-- FUTURE -->
+<section class="page" id="future">
+  <div class="container">
+    <div class="progress">Step 4 of 5</div>
+    <h2>Future & Commitment</h2>
 
-<button class="main" onclick="location.reload()">Recalculate</button>
-</div>
+    <div class="question">
+      <p>Where is this going?</p>
+      <div class="options">
+        <button onclick="choose(this,10,'future')">Long-term</button>
+        <button onclick="choose(this,7,'future')">Building</button>
+        <button onclick="choose(this,4,'future')">Unclear</button>
+        <button onclick="choose(this,2,'future')">Just present</button>
+      </div>
+    </div>
+
+    <button onclick="calculate()">View Result</button>
+    <button class="secondary" onclick="go('trust')">Back</button>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section class="page" id="result">
+  <div class="container">
+    <div class="hero-heart">❤️</div>
+    <h1 id="percent">0%</h1>
+    <p id="verdict"></p>
+
+    <div class="bar"><span id="b1"></span></div>
+    <div class="bar"><span id="b2"></span></div>
+    <div class="bar"><span id="b3"></span></div>
+    <div class="bar"><span id="b4"></span></div>
+
+    <div class="report" id="report"></div>
+
+    <button onclick="go('advice')">View Advice</button>
+    <button class="secondary" onclick="location.reload()">Restart</button>
+  </div>
+</section>
+
+<!-- ADVICE -->
+<section class="page" id="advice">
+  <div class="container">
+    <h2>Growth Advice</h2>
+    <div class="report" id="adviceText"></div>
+    <button onclick="location.reload()">New Test</button>
+  </div>
+</section>
+
+<!-- INFINITE LOVE (EASTER EGG) -->
+<section class="page" id="infinite">
+  <div class="container">
+    <div class="hero-heart">♾️❤️</div>
+    <h1>Infinite Love</h1>
+    <p style="font-size:18px;">
+      This love cannot be measured.
+    </p>
+    <p>
+      <b>Shailesh</b> & <b>Bishakha</b><br>
+      are not humans.
+    </p>
+    <p style="opacity:.8;">
+      Beyond psychology, logic, and numbers.
+    </p>
+    <button onclick="location.reload()">Restart</button>
+  </div>
+</section>
 
 </div>
 
 <script>
-let total = {emotional:0,attachment:0,communication:0,trust:0};
+const score={emotional:0,attachment:0,trust:0,communication:0,future:0};
 
-document.querySelectorAll(".options button").forEach(btn=>{
-  btn.onclick=()=>{
-    let parent=btn.parentElement;
-    parent.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    total[parent.dataset.score]=Number(btn.dataset.value);
-  }
-});
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function choose(btn,val,type){
+  let box=btn.parentElement;
+  box.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  score[type]=val;
+}
 
 function calculate(){
-  let sum = total.emotional + total.attachment + total.communication + total.trust;
-  if(sum===0){alert("Please answer all questions");return}
+  let you=document.getElementById('you').value.trim().toLowerCase();
+  let partner=document.getElementById('partner').value.trim().toLowerCase();
 
-  let percent = Math.round((sum/40)*100);
-  document.getElementById("form").style.display="none";
-  document.getElementById("result").style.display="block";
-  document.getElementById("score").innerText = percent+"%";
-
-  let msg="", insight="";
-
-  if(percent>=80){
-    msg="This is a rare emotional connection.";
-    insight="Strong trust, healthy communication, and emotional safety are present. This bond has long-term potential.";
-  }else if(percent>=60){
-    msg="A real connection with growth areas.";
-    insight="There is care and attachment, but emotional understanding and communication need attention.";
-  }else if(percent>=40){
-    msg="Emotions exist, stability is uncertain.";
-    insight="Inconsistency, insecurity, or emotional distance may affect this relationship.";
-  }else{
-    msg="This connection needs deep reflection.";
-    insight="Emotional safety and trust are low. Honest communication is required.";
+  // 💎 SPECIAL EASTER EGG
+  if(
+    (you==="shailesh" && partner==="bishakha") ||
+    (you==="bishakha" && partner==="shailesh")
+  ){
+    go('infinite');
+    return;
   }
 
-  document.getElementById("message").innerText=msg;
-  document.getElementById("report").innerHTML=
-    "<b>Psychological Insight:</b><br>"+insight+
-    "<br><br><b>Strength:</b> "+(total.emotional>=7?"Emotional awareness":"Needs empathy")+
-    "<br><b>Risk:</b> "+(total.trust<=4?"Low emotional security":"Manage expectations");
+  let total=score.emotional+score.attachment+score.trust+score.communication+score.future;
+  let percent=Math.round((total/50)*100);
+
+  go('result');
+  document.getElementById('percent').innerText=percent+"%";
+
+  let verdict="",report="",advice="";
+
+  if(percent>=80){
+    verdict="Rare emotional compatibility.";
+    report="Strong emotional safety, trust, and future alignment. This bond has real depth.";
+    advice="Protect communication. Don’t take this connection for granted.";
+  }else if(percent>=60){
+    verdict="Real connection with gaps.";
+    report="Care exists, but emotional consistency and trust need effort.";
+    advice="Work on reassurance, listening, and shared expectations.";
+  }else if(percent>=40){
+    verdict="Emotionally unstable connection.";
+    report="Attachment imbalance or emotional distance is present.";
+    advice="Clarify needs and boundaries honestly.";
+  }else{
+    verdict="High emotional risk.";
+    report="Low safety, trust, or commitment. Reflection is necessary.";
+    advice="Do not force this bond. Emotional health matters.";
+  }
+
+  document.getElementById('verdict').innerText=verdict;
+  document.getElementById('report').innerHTML="<b>Psychological Report:</b><br>"+report;
+  document.getElementById('adviceText').innerText=advice;
+
+  document.getElementById('b1').style.width=score.emotional*10+"%";
+  document.getElementById('b2').style.width=score.trust*10+"%";
+  document.getElementById('b3').style.width=score.communication*10+"%";
+  document.getElementById('b4').style.width=score.future*10+"%";
 }
 </script>
 
